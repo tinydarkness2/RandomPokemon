@@ -1,0 +1,29 @@
+<div class="unit-toggle" role="group" aria-label="Units">
+    @foreach (var option in Options)
+    {
+        <button type="button"
+                class="@(option == Value ? "selected" : null)"
+                aria-pressed="@(option == Value ? "true" : "false")"
+                @onclick="() => SelectAsync(option)">
+            @option
+        </button>
+    }
+</div>
+
+@code {
+    private static readonly UnitSystem[] Options = Enum.GetValues<UnitSystem>();
+
+    [Parameter]
+    public UnitSystem Value { get; set; }
+
+    [Parameter]
+    public EventCallback<UnitSystem> ValueChanged { get; set; }
+
+    private async Task SelectAsync(UnitSystem option)
+    {
+        if (option != Value)
+        {
+            await ValueChanged.InvokeAsync(option);
+        }
+    }
+}

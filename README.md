@@ -5,6 +5,11 @@ A small Blazor Web App that shows a random Pokémon from Generations 1–4
 button, plus a collapsible list of the moves it can learn. Data comes from
 [PokeAPI](https://pokeapi.co/).
 
+Height and weight can be shown in metric (0.7 m, 6.9 kg) or imperial
+(2′04″, 15.2 lb, rounded the way the Pokédex games do). The choice is saved
+in the browser's local storage. First-time visitors get imperial if their
+browser language is US English (`en-US`), and metric otherwise.
+
 It's a practice project for production-style .NET architecture: clean
 architecture layers, the Options pattern, a typed `HttpClient` with
 resilience, in-memory caching, and tests for every layer.

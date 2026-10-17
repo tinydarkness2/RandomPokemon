@@ -5,7 +5,9 @@ public sealed record PokemonDto(
     string Name,
     IReadOnlyList<string> Types,
     decimal HeightMetres,
+    int HeightInches,
     decimal WeightKilograms,
+    decimal WeightPounds,
     string? SpriteUrl,
     MovesetDto Moveset);
 

@@ -1,6 +1,7 @@
 using PokeViewer.Application;
 using PokeViewer.Infrastructure;
 using PokeViewer.Web.Components;
+using PokeViewer.Web.Units;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddRazorComponents()
 builder.Services
     .AddApplication(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
+
+builder.Services.AddScoped<IUnitPreferenceStore, BrowserUnitPreferenceStore>();
 
 var app = builder.Build();
 

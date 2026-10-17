@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PokeViewer.Application.Abstractions;
 using PokeViewer.Application.Pokedex;
+using PokeViewer.Application.Units;
+using PokeViewer.Web.Units;
 using PokeViewer.Web.Components.Pages;
 
 namespace PokeViewer.Web.Tests;
@@ -10,6 +12,7 @@ namespace PokeViewer.Web.Tests;
 public sealed class HomeTests : BunitContext
 {
     private readonly ControllablePokemonRepository _repository = new();
+    private readonly FakeUnitPreferenceStore _units = new(UnitSystem.Imperial);
 
     public HomeTests()
     {
@@ -17,6 +20,7 @@ public sealed class HomeTests : BunitContext
         Services.AddSingleton<IRandomIdProvider, FixedRandomIdProvider>();
         Services.AddSingleton(Options.Create(new PokedexOptions()));
         Services.AddMoveTypeLookups(new FakeMoveTypeRepository());
+        Services.AddSingleton<IUnitPreferenceStore>(_units);
         Services.AddTransient<GetRandomPokemonHandler>();
     }
 
@@ -89,5 +93,28 @@ public sealed class HomeTests : BunitContext
         await DisposeComponentsAsync();
 
         Assert.True(_repository.LastToken.IsCancellationRequested);
+    }
+
+    [Fact]
+    public void ShowsUnitToggle_WithTheRememberedChoice()
+    {
+        var page = Render<Home>();
+
+        page.WaitForAssertion(() => Assert.Equal("true", page.FindAll(".unit-toggle button")[1].GetAttribute("aria-pressed")));
+    }
+
+    [Fact]
+    public void SwitchingUnits_UpdatesTheCardAndRemembersTheChoice()
+    {
+        var page = Render<Home>();
+        page.Find(".pick-button").Click();
+        _repository.Succeed(ControllablePokemonRepository.Pikachu());
+        page.WaitForAssertion(() => Assert.Equal("1′04″", page.Find(".height [aria-hidden]").TextContent));
+
+        page.FindAll(".unit-toggle button")[0].Click();
+
+        Assert.Equal("0.4 m", page.Find(".height [aria-hidden]").TextContent);
+        Assert.Equal("6.0 kg", page.Find(".weight [aria-hidden]").TextContent);
+        Assert.Equal([UnitSystem.Metric], _units.Saved);
     }
 }
