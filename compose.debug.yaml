@@ -1,0 +1,19 @@
+# Runs PokeViewer.Web as a Debug build so VS Code can attach to it.
+# Started and stopped by the tasks in .vscode/tasks.json, which set
+# VSDBG_PATH to the C# extension's bundled debugger (its .debugger folder).
+# The debugger must be the same version as the extension, otherwise
+# breakpoints fail with "Incorrect breakpoint request format".
+services:
+  web:
+    container_name: pokeviewer-debug
+    build:
+      context: .
+      target: debug
+      args:
+        CONFIGURATION: Debug
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - ${VSDBG_PATH:?Set VSDBG_PATH to the C# extension's .debugger folder}:/vsdbg:ro
