@@ -1,8 +1,8 @@
 # PokeViewer
 
 A small Blazor Web App that shows a random Pokémon from Generations 1–4
-(name, types, height, weight and official artwork) each time you press a
-button, plus a collapsible list of the moves it can learn. Data comes from
+(name, types, height, weight and official artwork) as soon as the page
+opens and again each time you press a button, plus a collapsible list of the moves it can learn. Data comes from
 [PokeAPI](https://pokeapi.co/).
 
 Height and weight can be shown in metric (0.7 m, 6.9 kg) or imperial
@@ -91,7 +91,7 @@ dotnet test
 - **Domain / Application:** plain xUnit, with hand-written fakes.
 - **Infrastructure:** a fake `HttpMessageHandler` returns canned PokeAPI JSON,
   so tests never call the live API.
-- **Web:** bUnit tests cover the hint, loading, success and error states.
+- **Web:** bUnit tests cover the first-visit, loading, success and error states.
 
 ## Conventions
 

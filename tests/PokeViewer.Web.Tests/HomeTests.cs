@@ -34,30 +34,19 @@ public sealed class HomeTests : BunitContext
     }
 
     [Fact]
-    public void InitiallyShowsAFriendlyHint()
+    public void ShowsLoadingState_WhileTheFirstPokemonIsOnItsWay()
     {
         var page = Render<Home>();
 
-        Assert.Contains("Press the button", page.Find(".status.hint").TextContent);
+        Assert.NotNull(page.Find(".status.loading"));
+        Assert.True(page.Find(".pick-button").HasAttribute("disabled"));
         Assert.Empty(page.FindAll(".pokemon-card"));
     }
 
     [Fact]
-    public void ShowsLoadingState_WhileFetching()
+    public void ShowsAPokemon_AsSoonAsThePageLoads()
     {
         var page = Render<Home>();
-
-        page.Find(".pick-button").Click();
-
-        Assert.NotNull(page.Find(".status.loading"));
-        Assert.True(page.Find(".pick-button").HasAttribute("disabled"));
-    }
-
-    [Fact]
-    public void ShowsPokemon_WhenFetchSucceeds()
-    {
-        var page = Render<Home>();
-        page.Find(".pick-button").Click();
 
         _repository.Succeed(ControllablePokemonRepository.Pikachu());
 
@@ -68,22 +57,44 @@ public sealed class HomeTests : BunitContext
     }
 
     [Fact]
-    public void ShowsFriendlyError_WhenFetchFails()
+    public void ShowsLoadingState_WhileFetchingAnother()
+    {
+        var page = RenderWithFirstPokemon();
+
+        page.Find(".pick-button").Click();
+
+        Assert.NotNull(page.Find(".status.loading"));
+        Assert.True(page.Find(".pick-button").HasAttribute("disabled"));
+    }
+
+    [Fact]
+    public void ShowsTheNextPokemon_WhenTheButtonIsPressed()
+    {
+        var page = RenderWithFirstPokemon();
+        page.Find(".pick-button").Click();
+
+        _repository.Succeed(ControllablePokemonRepository.Pikachu());
+
+        page.WaitForAssertion(() => Assert.Empty(page.FindAll(".status.loading")));
+        Assert.Equal("Pikachu", page.Find(".pokemon-card .name").TextContent);
+    }
+
+    [Fact]
+    public void ShowsFriendlyError_WhenTheFirstFetchFails()
     {
         var page = Render<Home>();
-        page.Find(".pick-button").Click();
 
         _repository.Fail();
 
         page.WaitForAssertion(() => Assert.Contains("try again", page.Find(".status.error").TextContent));
         Assert.NotNull(page.Find(".retry-button"));
+        Assert.False(page.Find(".pick-button").HasAttribute("disabled"));
     }
 
     [Fact]
     public void RetryButton_FetchesAgain()
     {
         var page = Render<Home>();
-        page.Find(".pick-button").Click();
         _repository.Fail();
         page.WaitForElement(".retry-button").Click();
 
@@ -96,8 +107,7 @@ public sealed class HomeTests : BunitContext
     [Fact]
     public async Task Dispose_CancelsInFlightRequest()
     {
-        var page = Render<Home>();
-        page.Find(".pick-button").Click();
+        Render<Home>();
 
         await DisposeComponentsAsync();
 
@@ -115,9 +125,7 @@ public sealed class HomeTests : BunitContext
     [Fact]
     public void SwitchingUnits_UpdatesTheCardAndRemembersTheChoice()
     {
-        var page = Render<Home>();
-        page.Find(".pick-button").Click();
-        _repository.Succeed(ControllablePokemonRepository.Pikachu());
+        var page = RenderWithFirstPokemon();
         page.WaitForAssertion(() => Assert.Equal("1′04″", page.Find(".height [aria-hidden]").TextContent));
 
         page.FindAll(".unit-toggle button")[0].Click();
@@ -125,5 +133,13 @@ public sealed class HomeTests : BunitContext
         Assert.Equal("0.4 m", page.Find(".height [aria-hidden]").TextContent);
         Assert.Equal("6.0 kg", page.Find(".weight [aria-hidden]").TextContent);
         Assert.Equal([UnitSystem.Metric], _units.Saved);
+    }
+
+    private IRenderedComponent<Home> RenderWithFirstPokemon()
+    {
+        var page = Render<Home>();
+        _repository.Succeed(ControllablePokemonRepository.Pikachu());
+        page.WaitForElement(".pokemon-card");
+        return page;
     }
 }
