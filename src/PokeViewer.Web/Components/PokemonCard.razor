@@ -1,0 +1,40 @@
+@using System.Globalization
+
+<article class="pokemon-card">
+    @if (Pokemon.SpriteUrl is not null)
+    {
+        <img class="sprite" src="@Pokemon.SpriteUrl" alt="@Pokemon.Name" width="240" height="240" />
+    }
+    else
+    {
+        <div class="sprite missing" aria-hidden="true">?</div>
+    }
+
+    <h2>
+        <span class="number">#@Pokemon.Id.ToString("000", CultureInfo.InvariantCulture)</span>
+        <span class="name">@Pokemon.Name</span>
+    </h2>
+
+    <ul class="types" aria-label="Types">
+        @foreach (var type in Pokemon.Types)
+        {
+            <li class="type type-@type.ToLowerInvariant()">@type</li>
+        }
+    </ul>
+
+    <dl class="stats">
+        <div>
+            <dt>Height</dt>
+            <dd class="height">@Pokemon.HeightMetres.ToString("0.0", CultureInfo.InvariantCulture) m</dd>
+        </div>
+        <div>
+            <dt>Weight</dt>
+            <dd class="weight">@Pokemon.WeightKilograms.ToString("0.0", CultureInfo.InvariantCulture) kg</dd>
+        </div>
+    </dl>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public PokemonDto Pokemon { get; set; } = default!;
+}

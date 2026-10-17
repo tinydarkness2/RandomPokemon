@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PokeViewer.Application/PokeViewer.Application.csproj" />
+    <Project Path="src/PokeViewer.Domain/PokeViewer.Domain.csproj" />
+    <Project Path="src/PokeViewer.Infrastructure/PokeViewer.Infrastructure.csproj" />
+    <Project Path="src/PokeViewer.Web/PokeViewer.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PokeViewer.Application.Tests/PokeViewer.Application.Tests.csproj" />
+    <Project Path="tests/PokeViewer.Domain.Tests/PokeViewer.Domain.Tests.csproj" />
+    <Project Path="tests/PokeViewer.Infrastructure.Tests/PokeViewer.Infrastructure.Tests.csproj" />
+    <Project Path="tests/PokeViewer.Web.Tests/PokeViewer.Web.Tests.csproj" />
+  </Folder>
+</Solution>

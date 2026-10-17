@@ -1,0 +1,15 @@
+namespace PokeViewer.Domain;
+
+/// <summary>Height as reported by PokeAPI, in decimetres.</summary>
+public readonly record struct Height
+{
+    public Height(int decimetres)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(decimetres);
+        Decimetres = decimetres;
+    }
+
+    public int Decimetres { get; }
+
+    public decimal Metres => Decimetres / 10m;
+}
