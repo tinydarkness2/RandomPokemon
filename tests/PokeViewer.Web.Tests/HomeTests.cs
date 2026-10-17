@@ -1,7 +1,5 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PokeViewer.Application.Abstractions;
 using PokeViewer.Application.Pokedex;
@@ -18,8 +16,7 @@ public sealed class HomeTests : BunitContext
         Services.AddSingleton<IPokemonRepository>(_repository);
         Services.AddSingleton<IRandomIdProvider, FixedRandomIdProvider>();
         Services.AddSingleton(Options.Create(new PokedexOptions()));
-        Services.AddSingleton<ILoggerFactory>(NullLoggerFactory.Instance);
-        Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+        Services.AddMoveTypeLookups(new FakeMoveTypeRepository());
         Services.AddTransient<GetRandomPokemonHandler>();
     }
 

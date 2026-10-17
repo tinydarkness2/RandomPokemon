@@ -14,6 +14,7 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services.AddTransient<GetRandomPokemonHandler>();
+        services.AddTransient<GetMoveTypesHandler>();
 
         return services;
     }

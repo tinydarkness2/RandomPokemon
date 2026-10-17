@@ -65,8 +65,17 @@ environment variable: `PokeApi__MaxId=151`.
 
 `MoveVersionGroup` takes a PokeAPI
 [version group](https://pokeapi.co/api/v2/version-group/) name such as
-`platinum` or `red-blue`. Moves come from the same `/pokemon/{id}` response,
-so showing them needs no extra API calls.
+`platinum` or `red-blue`.
+
+### Moves and move types
+
+The move list comes from the same `/pokemon/{id}` response, so it needs no
+extra API calls. Each move's type (used to colour its row) lives on
+`/move/{name}`, so it is looked up only when someone opens the Moves section:
+six at a time, and cached app-wide, so repeat moves cost nothing. Types are
+shown as they were in the configured game. For example, Charm is Normal in
+HeartGold/SoulSilver even though it is Fairy today, and Curse shows Gen 2–4's
+`???` type.
 
 ## Testing
 

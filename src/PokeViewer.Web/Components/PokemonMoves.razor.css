@@ -50,13 +50,32 @@ ul {
 
 li {
     display: flex;
+    align-items: center;
     gap: 0.75rem;
-    padding: 0.3rem 0;
-    border-bottom: 1px solid var(--border);
+    margin: 2px 0;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
 }
 
-li:last-child {
-    border-bottom: none;
+/* A soft wash of the move's type colour; unknown types fall back to grey. */
+li.typed {
+    background: color-mix(in srgb, var(--type-color, #8a8a8a) 14%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+    li.typed {
+        background: color-mix(in srgb, var(--type-color, #8a8a8a) 24%, transparent);
+    }
+}
+
+.move-type {
+    margin-left: auto;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: #fff;
+    background: var(--type-color, #8a8a8a);
 }
 
 .level {
@@ -72,6 +91,12 @@ li:last-child {
 }
 
 .source {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
     margin: 0.5rem 0 0;
-    text-align: right;
+}
+
+.loading-types {
+    margin-right: auto;
 }

@@ -24,6 +24,7 @@ public class DependencyInjectionTests
         using var scope = provider.CreateScope();
 
         Assert.IsType<CachedPokemonRepository>(scope.ServiceProvider.GetRequiredService<IPokemonRepository>());
+        Assert.IsType<CachedMoveTypeRepository>(scope.ServiceProvider.GetRequiredService<IMoveTypeRepository>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRandomIdProvider>());
     }
 

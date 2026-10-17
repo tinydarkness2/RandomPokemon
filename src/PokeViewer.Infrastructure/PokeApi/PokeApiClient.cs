@@ -15,29 +15,58 @@ internal sealed partial class PokeApiClient(
     IOptions<PokeApiOptions> options,
     ILogger<PokeApiClient> logger)
 {
-    public async Task<Pokemon> GetPokemonAsync(PokemonId id, CancellationToken cancellationToken)
+    public Task<Pokemon> GetPokemonAsync(PokemonId id, CancellationToken cancellationToken) =>
+        GetAsync<PokeApiPokemonResponse, Pokemon>(
+            $"pokemon/{id}",
+            $"Pokémon #{id}",
+            body => ToDomain(body, options.Value.MoveVersionGroup),
+            cancellationToken);
+
+    public Task<PokeApiMoveResponse> GetMoveAsync(string moveName, CancellationToken cancellationToken) =>
+        GetAsync<PokeApiMoveResponse, PokeApiMoveResponse>(
+            $"move/{Uri.EscapeDataString(moveName)}",
+            $"Move '{moveName}'",
+            body => body,
+            cancellationToken);
+
+    public Task<int> GetVersionGroupOrderAsync(string versionGroup, CancellationToken cancellationToken) =>
+        GetAsync<PokeApiVersionGroupResponse, int>(
+            $"version-group/{Uri.EscapeDataString(versionGroup)}",
+            $"Version group '{versionGroup}'",
+            body => body.Order,
+            cancellationToken);
+
+    /// <summary>
+    /// GETs <paramref name="path"/> and maps the JSON body. Every failure, including an
+    /// unusable body, becomes a <see cref="PokemonUnavailableException"/>.
+    /// </summary>
+    private async Task<TResult> GetAsync<TBody, TResult>(
+        string path,
+        string description,
+        Func<TBody, TResult> map,
+        CancellationToken cancellationToken)
     {
-        LogFetching(logger, id.Value);
+        LogFetching(logger, path);
 
         try
         {
-            using var response = await httpClient.GetAsync($"pokemon/{id}", cancellationToken);
+            using var response = await httpClient.GetAsync(path, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                throw new PokemonUnavailableException($"Pokémon #{id} was not found.");
+                throw new PokemonUnavailableException($"{description} was not found.");
             }
 
             response.EnsureSuccessStatusCode();
 
-            var body = await response.Content.ReadFromJsonAsync<PokeApiPokemonResponse>(cancellationToken)
-                ?? throw new PokemonUnavailableException($"PokeAPI returned an empty body for Pokémon #{id}.");
+            var body = await response.Content.ReadFromJsonAsync<TBody>(cancellationToken)
+                ?? throw new PokemonUnavailableException($"PokeAPI returned an empty body for {description}.");
 
-            return ToDomain(body, options.Value.MoveVersionGroup);
+            return map(body);
         }
         catch (Exception ex) when (IsTransportFailure(ex, cancellationToken))
         {
-            throw new PokemonUnavailableException($"PokeAPI request for Pokémon #{id} failed.", ex);
+            throw new PokemonUnavailableException($"PokeAPI request for {description} failed.", ex);
         }
     }
 
@@ -83,6 +112,6 @@ internal sealed partial class PokeApiClient(
         _ => MoveLearnMethod.Other,
     };
 
-    [LoggerMessage(Level = LogLevel.Debug, Message = "Fetching Pokémon #{PokemonId} from PokeAPI")]
-    private static partial void LogFetching(ILogger logger, int pokemonId);
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Fetching {Path} from PokeAPI")]
+    private static partial void LogFetching(ILogger logger, string path);
 }

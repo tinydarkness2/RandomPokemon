@@ -16,6 +16,7 @@ internal static class PokemonMapping
 
     /// <summary>Groups moves by how they are learned: level-up moves by level, the rest alphabetically.</summary>
     internal static MovesetDto ToDto(this Moveset moveset) => new(
+        moveset.VersionGroup,
         ToDisplayName(moveset.VersionGroup),
         moveset.Moves.Select(m => m.Name).Distinct().Count(),
         moveset.Moves
@@ -26,12 +27,17 @@ internal static class PokemonMapping
                 g.OrderBy(m => g.Key == MoveLearnMethod.LevelUp ? m.Level : 0)
                     .ThenBy(m => m.Name, StringComparer.Ordinal)
                     .Select(m => new MoveDto(
+                        m.Name,
                         ToDisplayName(m.Name),
                         g.Key == MoveLearnMethod.LevelUp ? m.Level : null))
                     .ToList()
                     .AsReadOnly()))
             .ToList()
             .AsReadOnly());
+
+    /// <summary>Gen 2–4's "???" type (Curse) is called "unknown" by PokeAPI; show it the way the games did.</summary>
+    internal static MoveTypeDto ToMoveTypeDto(this PokemonType type) =>
+        new(type.Name, type.Name == "unknown" ? "???" : ToDisplayName(type.Name));
 
     internal static string GroupTitle(MoveLearnMethod method) => method switch
     {

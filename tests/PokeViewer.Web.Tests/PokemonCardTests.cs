@@ -8,7 +8,10 @@ public sealed class PokemonCardTests : BunitContext
 {
     private static readonly PokemonDto Bulbasaur =
         new(1, "Bulbasaur", ["Grass", "Poison"], 0.7m, 6.9m, "https://img.example.test/1.png",
-            new MovesetDto("Heartgold Soulsilver", 1, [new MoveGroupDto("Level up", [new MoveDto("Tackle", 1)])]));
+            new MovesetDto("heartgold-soulsilver", "Heartgold Soulsilver", 1,
+                [new MoveGroupDto("Level up", [new MoveDto("tackle", "Tackle", 1)])]));
+
+    public PokemonCardTests() => Services.AddMoveTypeLookups(new FakeMoveTypeRepository());
 
     [Fact]
     public void ShowsNameNumberAndTypes()

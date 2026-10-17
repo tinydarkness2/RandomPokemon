@@ -8,6 +8,27 @@
     --error-surface: #fdecea;
     --error-text: #8a1c11;
     color-scheme: light dark;
+
+    /* Pokémon type colours, shared by type badges and move rows */
+    --type-normal: #a8a77a;
+    --type-fire: #ee8130;
+    --type-water: #6390f0;
+    --type-electric: #d4b000;
+    --type-grass: #5ea83a;
+    --type-ice: #4fb8b4;
+    --type-fighting: #c22e28;
+    --type-poison: #a33ea1;
+    --type-ground: #c4a24d;
+    --type-flying: #8f7ad6;
+    --type-psychic: #f95587;
+    --type-bug: #8e9c1a;
+    --type-rock: #b6a136;
+    --type-ghost: #735797;
+    --type-dragon: #6f35fc;
+    --type-dark: #705746;
+    --type-steel: #8f8fa8;
+    --type-fairy: #d685ad;
+    --type-unknown: #68a090;
 }
 
 @media (prefers-color-scheme: dark) {

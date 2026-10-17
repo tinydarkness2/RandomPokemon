@@ -50,8 +50,21 @@ public class MovesetMappingTests
     }
 
     [Fact]
-    public void UsesDisplayFriendlyGameName() =>
-        Assert.Equal("Heartgold Soulsilver", Bulbasaur.ToDto().GameName);
+    public void UsesDisplayFriendlyGameName_AndKeepsTheApiKey()
+    {
+        var dto = Bulbasaur.ToDto();
+
+        Assert.Equal("Heartgold Soulsilver", dto.GameName);
+        Assert.Equal("heartgold-soulsilver", dto.VersionGroup);
+    }
+
+    [Fact]
+    public void KeepsApiMoveKeyAlongsideDisplayName()
+    {
+        var vineWhip = Bulbasaur.ToDto().Groups[0].Moves.Single(m => m.Name == "Vine Whip");
+
+        Assert.Equal("vine-whip", vineWhip.Key);
+    }
 
     [Fact]
     public void OmitsEmptyGroups()

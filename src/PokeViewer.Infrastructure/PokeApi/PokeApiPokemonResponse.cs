@@ -37,3 +37,19 @@ internal sealed record PokeApiMoveVersionDetail(
     [property: JsonPropertyName("level_learned_at")] int LevelLearnedAt,
     [property: JsonPropertyName("move_learn_method")] PokeApiNamedResource MoveLearnMethod,
     [property: JsonPropertyName("version_group")] PokeApiNamedResource VersionGroup);
+
+// Only the fields we use from GET /move/{name}.
+internal sealed record PokeApiMoveResponse(
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("type")] PokeApiNamedResource Type,
+    [property: JsonPropertyName("past_values")] IReadOnlyList<PokeApiMovePastValue>? PastValues);
+
+/// <summary>Values the move had before <see cref="VersionGroup"/>; <see cref="Type"/> is null when the type didn't change then.</summary>
+internal sealed record PokeApiMovePastValue(
+    [property: JsonPropertyName("type")] PokeApiNamedResource? Type,
+    [property: JsonPropertyName("version_group")] PokeApiNamedResource VersionGroup);
+
+// Only the fields we use from GET /version-group/{name}.
+internal sealed record PokeApiVersionGroupResponse(
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("order")] int Order);
