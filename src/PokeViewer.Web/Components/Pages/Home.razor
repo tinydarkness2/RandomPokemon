@@ -40,10 +40,6 @@
         {
             <PokemonCard Pokemon="_pokemon" Units="_units" />
         }
-        else
-        {
-            <p class="status hint">Press the button to say hello to someone new.</p>
-        }
     </section>
 </main>
 
@@ -51,7 +47,8 @@
     private readonly CancellationTokenSource _disposalCts = new();
     private PokemonDto? _pokemon;
     private string? _errorMessage;
-    private bool _isLoading;
+    // Starts true so the prerendered page already shows the loading state for the first Pokémon.
+    private bool _isLoading = true;
     private UnitSystem _units;
     private bool _unitsLoaded;
 
@@ -63,6 +60,14 @@
             _units = await UnitPreferences.LoadAsync();
             _unitsLoaded = true;
             StateHasChanged();
+
+            // Fetch here rather than in OnInitializedAsync so prerendering and the
+            // interactive circuit don't each pick a different Pokémon.
+            await PickAsync();
+            if (!_disposalCts.IsCancellationRequested)
+            {
+                StateHasChanged();
+            }
         }
     }
 

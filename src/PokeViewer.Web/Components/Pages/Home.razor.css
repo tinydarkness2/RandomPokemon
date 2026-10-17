@@ -49,10 +49,6 @@
     color: var(--error-text);
 }
 
-.status.hint {
-    color: var(--muted);
-}
-
 .spinner {
     display: inline-block;
     width: 1rem;
