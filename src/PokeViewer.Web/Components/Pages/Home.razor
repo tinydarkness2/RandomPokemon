@@ -1,0 +1,80 @@
+@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject GetRandomPokemonHandler GetRandomPokemon
+
+<PageTitle>PokeViewer</PageTitle>
+
+<main class="pokeviewer">
+    <h1>PokeViewer</h1>
+    <p class="subtitle">Meet a random Pokémon from Generations 1–4 ✨</p>
+
+    <button class="pick-button" @onclick="PickAsync" disabled="@_isLoading">
+        @(_isLoading ? "Finding a friend…" : "Show me a Pokémon!")
+    </button>
+
+    <section class="result" aria-live="polite">
+        @if (_isLoading)
+        {
+            <div class="status loading" role="status">
+                <span class="spinner" aria-hidden="true"></span>
+                Looking through the tall grass…
+            </div>
+        }
+        else if (_errorMessage is not null)
+        {
+            <div class="status error" role="alert">
+                <p>@_errorMessage</p>
+                <button class="retry-button" @onclick="PickAsync">Try again</button>
+            </div>
+        }
+        else if (_pokemon is not null)
+        {
+            <PokemonCard Pokemon="_pokemon" />
+        }
+        else
+        {
+            <p class="status hint">Press the button to say hello to someone new.</p>
+        }
+    </section>
+</main>
+
+@code {
+    private readonly CancellationTokenSource _disposalCts = new();
+    private PokemonDto? _pokemon;
+    private string? _errorMessage;
+    private bool _isLoading;
+
+    private async Task PickAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var result = await GetRandomPokemon.HandleAsync(_disposalCts.Token);
+            if (result.IsSuccess)
+            {
+                _pokemon = result.Pokemon;
+            }
+            else
+            {
+                _errorMessage = result.ErrorMessage;
+            }
+        }
+        catch (OperationCanceledException) when (_disposalCts.IsCancellationRequested)
+        {
+            // The user left the page; nothing left to show.
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposalCts.Cancel();
+        _disposalCts.Dispose();
+    }
+}
