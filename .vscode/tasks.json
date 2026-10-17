@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "docker: up (debug)",
+      "type": "shell",
+      "command": "VSDBG_PATH=\"$(ls -d ~/.vscode/extensions/ms-dotnettools.csharp-*/.debugger | sort -V | tail -1)\" docker compose -f compose.debug.yaml up --detach --build --wait",
+      "options": {
+        "shell": { "executable": "bash", "args": ["-c"] }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: down (debug)",
+      "type": "shell",
+      "command": "VSDBG_PATH=/dev/null docker compose -f compose.debug.yaml down",
+      "options": {
+        "shell": { "executable": "bash", "args": ["-c"] }
+      },
+      "problemMatcher": []
+    }
+  ]
+}
