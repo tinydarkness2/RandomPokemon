@@ -4,11 +4,11 @@
 @inject GetRandomPokemonHandler GetRandomPokemon
 @inject IUnitPreferenceStore UnitPreferences
 
-<PageTitle>Random Pokemon 🌈</PageTitle>
+<PageTitle>Random Pokémon 🌈</PageTitle>
 
 <main class="pokeviewer">
-    <h1>Random Pokemon 🌈</h1>
-    <p class="subtitle">See a random Pokemon from generations 1 - 4 ✨</p>
+    <h1>Random Pokémon 🌈</h1>
+    <p class="subtitle">See a random Pokémon from generations 1 - 4 ✨</p>
 
     <button class="pick-button" @onclick="PickAsync" disabled="@_isLoading">
         @(_isLoading ? "Finding a friend…" : "Show me a Pokémon!")

@@ -29,8 +29,8 @@ public sealed class HomeTests : BunitContext
     {
         var page = Render<Home>();
 
-        Assert.Equal("Random Pokemon 🌈", page.Find("h1").TextContent);
-        Assert.Equal("See a random Pokemon from generations 1 - 4 ✨", page.Find(".subtitle").TextContent);
+        Assert.Equal("Random Pokémon 🌈", page.Find("h1").TextContent);
+        Assert.Equal("See a random Pokémon from generations 1 - 4 ✨", page.Find(".subtitle").TextContent);
     }
 
     [Fact]
