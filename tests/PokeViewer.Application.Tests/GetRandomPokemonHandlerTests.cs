@@ -45,6 +45,8 @@ public class GetRandomPokemonHandlerTests
         Assert.Equal(1.3m, dto.HeightMetres);
         Assert.Equal(54.5m, dto.WeightKilograms);
         Assert.Equal("https://example.test/122.png", dto.SpriteUrl);
+        Assert.Equal(2, dto.Moveset.MoveCount);
+        Assert.Equal(["Level up", "TM / HM"], dto.Moveset.Groups.Select(g => g.Title));
     }
 
     [Fact]

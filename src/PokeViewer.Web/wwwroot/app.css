@@ -3,6 +3,7 @@
     --surface: #ffffff;
     --text: #1f2330;
     --muted: #6b7080;
+    --border: #e4e6ee;
     --accent: #e3350d;
     --error-surface: #fdecea;
     --error-text: #8a1c11;
@@ -15,6 +16,7 @@
         --surface: #1f222c;
         --text: #eceef4;
         --muted: #a0a4b2;
+        --border: #2e3240;
         --accent: #ff5a36;
         --error-surface: #3a1c19;
         --error-text: #ffb4a8;

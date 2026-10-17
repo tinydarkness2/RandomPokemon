@@ -24,7 +24,8 @@ internal sealed class ControllablePokemonRepository : IPokemonRepository
 
     public static Pokemon Pikachu() => new(
         new PokemonId(25), "pikachu", [new PokemonType("electric")],
-        new Height(4), new Weight(60), new Uri("https://img.example.test/25.png"));
+        new Height(4), new Weight(60), new Uri("https://img.example.test/25.png"),
+        new Moveset("heartgold-soulsilver", [new PokemonMove("thunder-shock", MoveLearnMethod.LevelUp, 1)]));
 
     private static TaskCompletionSource<Pokemon> NewPending() =>
         new(TaskCreationOptions.RunContinuationsAsynchronously);

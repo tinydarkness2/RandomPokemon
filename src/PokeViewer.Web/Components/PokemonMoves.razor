@@ -1,0 +1,37 @@
+<details class="moves">
+    <summary>Moves <span class="count">(@Moveset.MoveCount)</span></summary>
+
+    @if (Moveset.Groups.Count == 0)
+    {
+        <p class="empty">No moves recorded for @Moveset.GameName.</p>
+    }
+    else
+    {
+        <div class="move-list" tabindex="0" aria-label="Moves list">
+            @foreach (var group in Moveset.Groups)
+            {
+                <section class="move-group">
+                    <h3>@group.Title</h3>
+                    <ul>
+                        @foreach (var move in group.Moves)
+                        {
+                            <li>
+                                @if (move.Level is { } level)
+                                {
+                                    <span class="level">Lv. @level</span>
+                                }
+                                <span class="move-name">@move.Name</span>
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+        </div>
+        <p class="source">From Pokémon @Moveset.GameName</p>
+    }
+</details>
+
+@code {
+    [Parameter, EditorRequired]
+    public MovesetDto Moveset { get; set; } = default!;
+}

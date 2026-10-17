@@ -52,6 +52,7 @@ public sealed class HomeTests : BunitContext
         _repository.Succeed(ControllablePokemonRepository.Pikachu());
 
         page.WaitForAssertion(() => Assert.Equal("Pikachu", page.Find(".pokemon-card .name").TextContent));
+        Assert.Equal("Thunder Shock", page.Find(".pokemon-card .move-name").TextContent);
         Assert.Empty(page.FindAll(".status.loading"));
         Assert.False(page.Find(".pick-button").HasAttribute("disabled"));
     }

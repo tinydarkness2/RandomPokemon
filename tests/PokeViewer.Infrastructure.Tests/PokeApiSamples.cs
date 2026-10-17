@@ -19,7 +19,41 @@ internal static class PokeApiSamples
             "other": {
               "official-artwork": { "front_default": "https://img.example.test/artwork/1.png" }
             }
-          }
+          },
+          "moves": [
+            {
+              "move": { "name": "vine-whip", "url": "https://pokeapi.co/api/v2/move/22/" },
+              "version_group_details": [
+                { "level_learned_at": 9, "move_learn_method": { "name": "level-up" }, "version_group": { "name": "heartgold-soulsilver" } },
+                { "level_learned_at": 3, "move_learn_method": { "name": "level-up" }, "version_group": { "name": "scarlet-violet" } }
+              ]
+            },
+            {
+              "move": { "name": "solar-beam" },
+              "version_group_details": [
+                { "level_learned_at": 0, "move_learn_method": { "name": "machine" }, "version_group": { "name": "heartgold-soulsilver" } }
+              ]
+            },
+            {
+              "move": { "name": "petal-dance" },
+              "version_group_details": [
+                { "level_learned_at": 0, "move_learn_method": { "name": "egg" }, "version_group": { "name": "heartgold-soulsilver" } }
+              ]
+            },
+            {
+              "move": { "name": "seed-bomb" },
+              "version_group_details": [
+                { "level_learned_at": 0, "move_learn_method": { "name": "tutor" }, "version_group": { "name": "heartgold-soulsilver" } },
+                { "level_learned_at": 0, "move_learn_method": { "name": "form-change" }, "version_group": { "name": "heartgold-soulsilver" } }
+              ]
+            },
+            {
+              "move": { "name": "leaf-storm" },
+              "version_group_details": [
+                { "level_learned_at": 0, "move_learn_method": { "name": "tutor" }, "version_group": { "name": "scarlet-violet" } }
+              ]
+            }
+          ]
         }
         """;
 

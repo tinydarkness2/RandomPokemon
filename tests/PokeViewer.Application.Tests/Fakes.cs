@@ -18,7 +18,11 @@ internal sealed class FakePokemonRepository : IPokemonRepository
 
     public static Pokemon Sample(PokemonId id) => new(
         id, "mr-mime", [new PokemonType("psychic"), new PokemonType("fairy")],
-        new Height(13), new Weight(545), new Uri($"https://example.test/{id}.png"));
+        new Height(13), new Weight(545), new Uri($"https://example.test/{id}.png"),
+        new Moveset("heartgold-soulsilver", [
+            new PokemonMove("confusion", MoveLearnMethod.LevelUp, 1),
+            new PokemonMove("psychic", MoveLearnMethod.Machine),
+        ]));
 }
 
 internal sealed class FakeRandomIdProvider(int value) : IRandomIdProvider
