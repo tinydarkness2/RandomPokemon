@@ -1,13 +1,16 @@
-<div class="unit-toggle" role="group" aria-label="Units">
-    @foreach (var option in Options)
-    {
-        <button type="button"
-                class="@(option == Value ? "selected" : null)"
-                aria-pressed="@(option == Value ? "true" : "false")"
-                @onclick="() => SelectAsync(option)">
-            @option
-        </button>
-    }
+<div class="unit-picker">
+    <span class="unit-label" id="unit-toggle-label">Height and weight units</span>
+    <div class="unit-toggle" role="group" aria-labelledby="unit-toggle-label">
+        @foreach (var option in Options)
+        {
+            <button type="button"
+                    class="@(option == Value ? "selected" : null)"
+                    aria-pressed="@(option == Value ? "true" : "false")"
+                    @onclick="() => SelectAsync(option)">
+                @option
+            </button>
+        }
+    </div>
 </div>
 
 @code {
