@@ -14,7 +14,8 @@ public sealed class UnitToggleTests : BunitContext
         var buttons = toggle.FindAll("button");
         Assert.Equal(["Metric", "Imperial"], buttons.Select(b => b.TextContent.Trim()));
         Assert.Equal(["false", "true"], buttons.Select(b => b.GetAttribute("aria-pressed")));
-        Assert.Equal("Units", toggle.Find("[role=group]").GetAttribute("aria-label"));
+        var labelId = toggle.Find("[role=group]").GetAttribute("aria-labelledby");
+        Assert.Equal("Height and weight units", toggle.Find($"#{labelId}").TextContent);
     }
 
     [Fact]

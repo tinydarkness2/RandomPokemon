@@ -25,6 +25,15 @@ public sealed class HomeTests : BunitContext
     }
 
     [Fact]
+    public void ShowsTitleAndSubtitle()
+    {
+        var page = Render<Home>();
+
+        Assert.Equal("Random Pokemon 🌈", page.Find("h1").TextContent);
+        Assert.Equal("See a random Pokemon from generations 1 - 4 ✨", page.Find(".subtitle").TextContent);
+    }
+
+    [Fact]
     public void InitiallyShowsAFriendlyHint()
     {
         var page = Render<Home>();
