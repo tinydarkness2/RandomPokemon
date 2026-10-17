@@ -22,14 +22,24 @@
         }
     </ul>
 
+    @{
+        var height = Measurements.FormatHeight(Pokemon, Units);
+        var weight = Measurements.FormatWeight(Pokemon, Units);
+    }
     <dl class="stats">
         <div>
             <dt>Height</dt>
-            <dd class="height">@Pokemon.HeightMetres.ToString("0.0", CultureInfo.InvariantCulture) m</dd>
+            <dd class="height">
+                <span aria-hidden="true">@height.Text</span>
+                <span class="visually-hidden">@height.SpokenText</span>
+            </dd>
         </div>
         <div>
             <dt>Weight</dt>
-            <dd class="weight">@Pokemon.WeightKilograms.ToString("0.0", CultureInfo.InvariantCulture) kg</dd>
+            <dd class="weight">
+                <span aria-hidden="true">@weight.Text</span>
+                <span class="visually-hidden">@weight.SpokenText</span>
+            </dd>
         </div>
     </dl>
 
@@ -39,4 +49,7 @@
 @code {
     [Parameter, EditorRequired]
     public PokemonDto Pokemon { get; set; } = default!;
+
+    [Parameter]
+    public UnitSystem Units { get; set; }
 }

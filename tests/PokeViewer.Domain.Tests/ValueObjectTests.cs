@@ -35,3 +35,25 @@ public class ValueObjectTests
     [Fact]
     public void PokemonType_HasValueEquality() => Assert.Equal(new PokemonType("fire"), new PokemonType("FIRE"));
 }
+
+public class ImperialConversionTests
+{
+    // Expected values are what the Pokédex games show.
+    [Theory]
+    [InlineData(7, 28)]    // Bulbasaur 2′04″
+    [InlineData(4, 16)]    // Pikachu 1′04″
+    [InlineData(21, 83)]   // Snorlax 6′11″
+    [InlineData(88, 346)]  // Onix 28′10″
+    [InlineData(0, 0)]
+    public void Height_ConvertsToWholeInches(int decimetres, int inches) =>
+        Assert.Equal(inches, new Height(decimetres).TotalInches);
+
+    [Theory]
+    [InlineData(69, 15.2)]      // Bulbasaur
+    [InlineData(60, 13.2)]      // Pikachu
+    [InlineData(4600, 1014.1)]  // Snorlax
+    [InlineData(2100, 463.0)]   // Onix
+    [InlineData(1, 0.2)]        // Gastly
+    public void Weight_ConvertsToPounds(int hectograms, double pounds) =>
+        Assert.Equal((decimal)pounds, new Weight(hectograms).Pounds);
+}

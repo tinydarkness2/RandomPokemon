@@ -1,5 +1,6 @@
 using Bunit;
 using PokeViewer.Application.Pokedex;
+using PokeViewer.Application.Units;
 using PokeViewer.Web.Components;
 
 namespace PokeViewer.Web.Tests;
@@ -7,7 +8,7 @@ namespace PokeViewer.Web.Tests;
 public sealed class PokemonCardTests : BunitContext
 {
     private static readonly PokemonDto Bulbasaur =
-        new(1, "Bulbasaur", ["Grass", "Poison"], 0.7m, 6.9m, "https://img.example.test/1.png",
+        new(1, "Bulbasaur", ["Grass", "Poison"], 0.7m, 28, 6.9m, 15.2m, "https://img.example.test/1.png",
             new MovesetDto("heartgold-soulsilver", "Heartgold Soulsilver", 1,
                 [new MoveGroupDto("Level up", [new MoveDto("tackle", "Tackle", 1)])]));
 
@@ -29,8 +30,22 @@ public sealed class PokemonCardTests : BunitContext
     {
         var card = Render<PokemonCard>(p => p.Add(c => c.Pokemon, Bulbasaur));
 
-        Assert.Equal("0.7 m", card.Find(".height").TextContent);
-        Assert.Equal("6.9 kg", card.Find(".weight").TextContent);
+        Assert.Equal("0.7 m", card.Find(".height [aria-hidden]").TextContent);
+        Assert.Equal("6.9 kg", card.Find(".weight [aria-hidden]").TextContent);
+        Assert.Equal("0.7 metres", card.Find(".height .visually-hidden").TextContent);
+    }
+
+    [Fact]
+    public void ShowsImperialHeightAndWeight_WhenChosen()
+    {
+        var card = Render<PokemonCard>(p => p
+            .Add(c => c.Pokemon, Bulbasaur)
+            .Add(c => c.Units, UnitSystem.Imperial));
+
+        Assert.Equal("2′04″", card.Find(".height [aria-hidden]").TextContent);
+        Assert.Equal("15.2 lb", card.Find(".weight [aria-hidden]").TextContent);
+        Assert.Equal("2 feet 4 inches", card.Find(".height .visually-hidden").TextContent);
+        Assert.Equal("15.2 pounds", card.Find(".weight .visually-hidden").TextContent);
     }
 
     [Fact]

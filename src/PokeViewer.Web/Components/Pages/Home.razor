@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @implements IDisposable
 @inject GetRandomPokemonHandler GetRandomPokemon
+@inject IUnitPreferenceStore UnitPreferences
 
 <PageTitle>PokeViewer</PageTitle>
 
@@ -12,6 +13,13 @@
     <button class="pick-button" @onclick="PickAsync" disabled="@_isLoading">
         @(_isLoading ? "Finding a friend…" : "Show me a Pokémon!")
     </button>
+
+    @if (_unitsLoaded)
+    {
+        <div>
+            <UnitToggle Value="_units" ValueChanged="OnUnitsChangedAsync" />
+        </div>
+    }
 
     <section class="result" aria-live="polite">
         @if (_isLoading)
@@ -30,7 +38,7 @@
         }
         else if (_pokemon is not null)
         {
-            <PokemonCard Pokemon="_pokemon" />
+            <PokemonCard Pokemon="_pokemon" Units="_units" />
         }
         else
         {
@@ -44,6 +52,25 @@
     private PokemonDto? _pokemon;
     private string? _errorMessage;
     private bool _isLoading;
+    private UnitSystem _units;
+    private bool _unitsLoaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Browser storage is only reachable once the interactive circuit is up.
+        if (firstRender)
+        {
+            _units = await UnitPreferences.LoadAsync();
+            _unitsLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnUnitsChangedAsync(UnitSystem units)
+    {
+        _units = units;
+        await UnitPreferences.SaveAsync(units);
+    }
 
     private async Task PickAsync()
     {

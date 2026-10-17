@@ -10,7 +10,9 @@ internal static class PokemonMapping
         ToDisplayName(pokemon.Name),
         pokemon.Types.Select(t => ToDisplayName(t.Name)).ToList().AsReadOnly(),
         pokemon.Height.Metres,
+        pokemon.Height.TotalInches,
         pokemon.Weight.Kilograms,
+        pokemon.Weight.Pounds,
         pokemon.SpriteUrl?.AbsoluteUri,
         pokemon.Moveset.ToDto());
 

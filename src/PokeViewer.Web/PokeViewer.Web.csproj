@@ -9,4 +9,8 @@
     <ProjectReference Include="..\PokeViewer.Infrastructure\PokeViewer.Infrastructure.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PokeViewer.Web.Tests" />
+  </ItemGroup>
 </Project>
