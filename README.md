@@ -2,7 +2,8 @@
 
 A small Blazor Web App that shows a random Pokémon from Generations 1–4
 (name, types, height, weight and official artwork) each time you press a
-button. Data comes from [PokeAPI](https://pokeapi.co/).
+button, plus a collapsible list of the moves it can learn. Data comes from
+[PokeAPI](https://pokeapi.co/).
 
 It's a practice project for production-style .NET architecture: clean
 architecture layers, the Options pattern, a typed `HttpClient` with
@@ -57,9 +58,24 @@ Settings live in the `PokeApi` section of
 | `MinId`         | `1`                          | Lowest Pokédex number to pick            |
 | `MaxId`         | `493`                        | Highest Pokédex number (493 = Arceus)    |
 | `CacheDuration` | `01:00:00`                   | How long a fetched Pokémon stays cached  |
+| `MoveVersionGroup` | `heartgold-soulsilver`    | Which game's moveset to show             |
 
 For example, to stick to Generation 1, set `MaxId` to `151`, or use an
 environment variable: `PokeApi__MaxId=151`.
+
+`MoveVersionGroup` takes a PokeAPI
+[version group](https://pokeapi.co/api/v2/version-group/) name such as
+`platinum` or `red-blue`.
+
+### Moves and move types
+
+The move list comes from the same `/pokemon/{id}` response, so it needs no
+extra API calls. Each move's type (used to colour its row) lives on
+`/move/{name}`, so it is looked up only when someone opens the Moves section:
+six at a time, and cached app-wide, so repeat moves cost nothing. Types are
+shown as they were in the configured game. For example, Charm is Normal in
+HeartGold/SoulSilver even though it is Fairy today, and Curse shows Gen 2–4's
+`???` type.
 
 ## Testing
 

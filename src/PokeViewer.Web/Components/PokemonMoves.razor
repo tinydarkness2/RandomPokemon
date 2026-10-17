@@ -1,0 +1,114 @@
+@implements IDisposable
+@inject GetMoveTypesHandler GetMoveTypes
+
+<details class="moves" open="@_isOpen" @ontoggle="OnToggleAsync">
+    <summary>Moves <span class="count">(@Moveset.MoveCount)</span></summary>
+
+    @if (Moveset.Groups.Count == 0)
+    {
+        <p class="empty">No moves recorded for @Moveset.GameName.</p>
+    }
+    else
+    {
+        <div class="move-list" tabindex="0" aria-label="Moves list">
+            @foreach (var group in Moveset.Groups)
+            {
+                <section class="move-group">
+                    <h3>@group.Title</h3>
+                    <ul>
+                        @foreach (var move in group.Moves)
+                        {
+                            var type = TypeOf(move);
+                            <li class="move @(type is null ? null : "typed")"
+                                style="@(type is null ? null : $"--type-color: var(--type-{type.Key})")">
+                                @if (move.Level is { } level)
+                                {
+                                    <span class="level">Lv. @level</span>
+                                }
+                                <span class="move-name">@move.Name</span>
+                                @if (type is not null)
+                                {
+                                    <span class="move-type">@type.Name</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
+        </div>
+        <p class="source" aria-live="polite">
+            @if (_isLoadingTypes)
+            {
+                <span class="loading-types">Colouring moves by type…</span>
+            }
+            From Pokémon @Moveset.GameName
+        </p>
+    }
+</details>
+
+@code {
+    private CancellationTokenSource _cts = new();
+    private IReadOnlyDictionary<string, MoveTypeDto> _types = new Dictionary<string, MoveTypeDto>();
+    private MovesetDto? _typesLoadedFor;
+    private bool _isOpen;
+    private bool _isLoadingTypes;
+
+    [Parameter, EditorRequired]
+    public MovesetDto Moveset { get; set; } = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // A new Pokémon arrived while the section was already open.
+        if (_isOpen && !ReferenceEquals(_typesLoadedFor, Moveset))
+        {
+            await LoadTypesAsync();
+        }
+    }
+
+    private async Task OnToggleAsync()
+    {
+        _isOpen = !_isOpen;
+        if (_isOpen && !ReferenceEquals(_typesLoadedFor, Moveset))
+        {
+            await LoadTypesAsync();
+        }
+    }
+
+    private async Task LoadTypesAsync()
+    {
+        // Abandon any lookup still running for the previous Pokémon.
+        await _cts.CancelAsync();
+        _cts.Dispose();
+        _cts = new CancellationTokenSource();
+
+        var moveset = Moveset;
+        _typesLoadedFor = moveset;
+        _types = new Dictionary<string, MoveTypeDto>();
+        _isLoadingTypes = true;
+
+        try
+        {
+            _types = await GetMoveTypes.HandleAsync(moveset, _cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            // Superseded by a newer Pokémon, or the component went away.
+            return;
+        }
+        finally
+        {
+            if (ReferenceEquals(_typesLoadedFor, moveset))
+            {
+                _isLoadingTypes = false;
+            }
+        }
+    }
+
+    private MoveTypeDto? TypeOf(MoveDto move) => _types.GetValueOrDefault(move.Key);
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}

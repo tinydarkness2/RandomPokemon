@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using PokeViewer.Application.Abstractions;
 using PokeViewer.Domain;
 using PokeViewer.Infrastructure.PokeApi;
@@ -8,8 +9,9 @@ namespace PokeViewer.Infrastructure.Tests;
 
 public class PokeApiClientTests
 {
-    private static PokeApiClient CreateClient(HttpMessageHandler handler) =>
+    private static PokeApiClient CreateClient(HttpMessageHandler handler, string moveVersionGroup = "heartgold-soulsilver") =>
         new(new HttpClient(handler) { BaseAddress = new Uri("https://pokeapi.test/api/v2/") },
+            Options.Create(new PokeApiOptions { MoveVersionGroup = moveVersionGroup }),
             NullLogger<PokeApiClient>.Instance);
 
     [Fact]
@@ -34,6 +36,44 @@ public class PokeApiClientTests
         Assert.Equal(7, pokemon.Height.Decimetres);
         Assert.Equal(69, pokemon.Weight.Hectograms);
         Assert.Equal(new Uri("https://img.example.test/artwork/1.png"), pokemon.SpriteUrl);
+    }
+
+    [Fact]
+    public async Task GetPokemonAsync_MapsMovesFromConfiguredGameOnly()
+    {
+        var pokemon = await CreateClient(FakeHttpMessageHandler.Json(PokeApiSamples.Bulbasaur))
+            .GetPokemonAsync(new PokemonId(1), CancellationToken.None);
+
+        Assert.Equal("heartgold-soulsilver", pokemon.Moveset.VersionGroup);
+        Assert.Equal(
+            [
+                new PokemonMove("vine-whip", MoveLearnMethod.LevelUp, 9),
+                new PokemonMove("solar-beam", MoveLearnMethod.Machine),
+                new PokemonMove("petal-dance", MoveLearnMethod.Egg),
+                new PokemonMove("seed-bomb", MoveLearnMethod.Tutor),
+                new PokemonMove("seed-bomb", MoveLearnMethod.Other),
+            ],
+            pokemon.Moveset.Moves);
+    }
+
+    [Fact]
+    public async Task GetPokemonAsync_UsesMoveVersionGroupFromOptions()
+    {
+        var pokemon = await CreateClient(FakeHttpMessageHandler.Json(PokeApiSamples.Bulbasaur), "scarlet-violet")
+            .GetPokemonAsync(new PokemonId(1), CancellationToken.None);
+
+        Assert.Equal(
+            [new PokemonMove("vine-whip", MoveLearnMethod.LevelUp, 3), new PokemonMove("leaf-storm", MoveLearnMethod.Tutor)],
+            pokemon.Moveset.Moves);
+    }
+
+    [Fact]
+    public async Task GetPokemonAsync_AllowsMissingMoves()
+    {
+        var pokemon = await CreateClient(FakeHttpMessageHandler.Json(PokeApiSamples.NoSprites))
+            .GetPokemonAsync(new PokemonId(201), CancellationToken.None);
+
+        Assert.Empty(pokemon.Moveset.Moves);
     }
 
     [Fact]

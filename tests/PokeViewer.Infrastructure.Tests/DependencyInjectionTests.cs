@@ -24,6 +24,7 @@ public class DependencyInjectionTests
         using var scope = provider.CreateScope();
 
         Assert.IsType<CachedPokemonRepository>(scope.ServiceProvider.GetRequiredService<IPokemonRepository>());
+        Assert.IsType<CachedMoveTypeRepository>(scope.ServiceProvider.GetRequiredService<IMoveTypeRepository>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<IRandomIdProvider>());
     }
 
@@ -39,10 +40,13 @@ public class DependencyInjectionTests
         Assert.Equal(new Uri("https://pokeapi.test/api/v2/"), httpClient.BaseAddress);
     }
 
-    [Fact]
-    public void RejectsInvalidCacheDuration()
+    [Theory]
+    [InlineData("PokeApi:CacheDuration", "00:00:00")]
+    [InlineData("PokeApi:MoveVersionGroup", "")]
+    [InlineData("PokeApi:MoveVersionGroup", "Heart Gold")]
+    public void RejectsInvalidSettings(string key, string value)
     {
-        using var provider = BuildProvider(new() { ["PokeApi:CacheDuration"] = "00:00:00" });
+        using var provider = BuildProvider(new() { [key] = value });
 
         Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<PokeApiOptions>>().Value);
     }

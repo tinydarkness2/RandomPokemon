@@ -30,6 +30,7 @@ public static class DependencyInjection
             .AddStandardResilienceHandler();
 
         services.AddScoped<IPokemonRepository, CachedPokemonRepository>();
+        services.AddScoped<IMoveTypeRepository, CachedMoveTypeRepository>();
         services.AddSingleton<IRandomIdProvider, SystemRandomIdProvider>();
 
         return services;

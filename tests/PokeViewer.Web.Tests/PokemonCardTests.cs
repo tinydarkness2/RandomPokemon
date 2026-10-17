@@ -7,7 +7,11 @@ namespace PokeViewer.Web.Tests;
 public sealed class PokemonCardTests : BunitContext
 {
     private static readonly PokemonDto Bulbasaur =
-        new(1, "Bulbasaur", ["Grass", "Poison"], 0.7m, 6.9m, "https://img.example.test/1.png");
+        new(1, "Bulbasaur", ["Grass", "Poison"], 0.7m, 6.9m, "https://img.example.test/1.png",
+            new MovesetDto("heartgold-soulsilver", "Heartgold Soulsilver", 1,
+                [new MoveGroupDto("Level up", [new MoveDto("tackle", "Tackle", 1)])]));
+
+    public PokemonCardTests() => Services.AddMoveTypeLookups(new FakeMoveTypeRepository());
 
     [Fact]
     public void ShowsNameNumberAndTypes()
@@ -46,5 +50,13 @@ public sealed class PokemonCardTests : BunitContext
 
         Assert.Empty(card.FindAll("img"));
         Assert.NotNull(card.Find(".sprite.missing"));
+    }
+
+    [Fact]
+    public void IncludesMovesSection()
+    {
+        var card = Render<PokemonCard>(p => p.Add(c => c.Pokemon, Bulbasaur));
+
+        Assert.Equal("Moves (1)", card.Find(".moves summary").TextContent);
     }
 }

@@ -16,6 +16,7 @@ public sealed class CachedPokemonRepositoryTests : IDisposable
     private CachedPokemonRepository CreateRepository(HttpMessageHandler handler) => new(
         new PokeApiClient(
             new HttpClient(handler) { BaseAddress = new Uri("https://pokeapi.test/api/v2/") },
+            Options.Create(new PokeApiOptions()),
             NullLogger<PokeApiClient>.Instance),
         _cache,
         Options.Create(new PokeApiOptions()));
